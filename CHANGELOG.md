@@ -8,6 +8,20 @@ Do not recap other units here.
 
 ## [Unreleased]
 
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.1.0] - 2026-09-21
+
 ### Changed
 
 - `cloudbuild.sh` grants the operator SA `serviceusage.serviceUsageConsumer`,
