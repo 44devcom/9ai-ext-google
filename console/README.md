@@ -9,33 +9,37 @@ images after `gcloud auth configure-docker`.
 ## Prerequisites
 
 - Docker and Docker Compose
-- GCP service account JSON at `.storage/google/gcp.json`
-  (`manager gcp credentials set --file /path/to/sa.json`)
+- GCP service account material in the sealed vault (`vault material`, service
+  `gcp`, name `default`) — projected as `GCP_CREDENTIALS_JSON`
 
 ## Setup
 
-### Credentials (manager)
+### Load from vault
+
+`.env.example` is a name catalog only. Prefer vault material + projected export
+over writing `gcp.json` or `.env`:
 
 ```bash
-uv run --directory .project --package platform-manager \\
-  manager gcp credentials set --file /path/to/sa.json
-uv run --directory .project --package platform-manager \\
-  manager gcp credentials status
-uv run --directory .project --package platform-manager \\
-  manager gcp initialize
+export CONFIG_PASSWORD='…'   # or --password-file
+export VAULT_PATH=/path/to/vault.enc
+
+# Store SA JSON once (if not already in vault):
+# vault material set --vault "$VAULT_PATH" --service gcp --name default \
+#   --format json --file /path/to/sa.json --password-env CONFIG_PASSWORD
+
+cd packages/ext/google/console
+set -a
+eval "$(vault env export --vault "$VAULT_PATH" --service gcp_console --environment local \
+  --project-credentials --password-env CONFIG_PASSWORD --format shell)"
+set +a
+
+docker compose build
 ```
-
-`manager gcp initialize` enables Cloud Build APIs and grants the operator SA
-`serviceusage.services.use`, Cloud Build editor, and write on the staging
-bucket (`gs://PROJECT_ID_cloudbuild`). The credential must be allowed to
-set project IAM (Owner or equivalent).
-
-Manager injects `GCP_CREDENTIALS_JSON` when submitting Cloud Build. The console
-scripts also read `.storage/google/gcp.json` when the env var is unset.
 
 Optional: set `GCP_PROJECT` to override `project_id` from the JSON.
 
-Never commit `gcp.json`, `.env`, or exported credential values.
+Never commit `gcp.json`, `.env`, or exported credential values. Do not write
+those files as the happy path.
 
 ## Usage
 

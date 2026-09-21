@@ -1,0 +1,6 @@
+version: 1
+exclude:
+  - .44dev/index/**
+  - .cursor/hooks.json
+workspace:
+  changelog: CHANGELOG.md

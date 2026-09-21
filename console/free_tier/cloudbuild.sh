@@ -177,24 +177,4 @@ if [[ "$ASYNC" -eq 1 ]]; then
   args+=(--async)
 fi
 
-log="$(mktemp)"
-set +e
-run_gcp gcloud "${args[@]}" >"$log" 2>&1
-rc=$?
-set -e
-cat "$log"
-if [[ "$rc" -eq 0 ]]; then
-  rm -f "$log"
-  exit 0
-fi
-if cloudbuild_submit_denied "$log"; then
-  export CLOUD_BUILD_REGION="$REGION"
-  echo "cloudbuild: submit denied (serviceusage/bucket); granting and retrying" >&2
-  grant_cloudbuild_submit_access "$log"
-  rm -f "$log"
-  sleep 8
-  run_gcp gcloud "${args[@]}"
-  exit $?
-fi
-rm -f "$log"
-exit "$rc"
+run_gcp gcloud "${args[@]}"

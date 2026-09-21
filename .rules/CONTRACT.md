@@ -8,9 +8,9 @@ helper scripts under `console/scripts/`. No Python distribution and no
 
 ## Inputs / assumptions
 Callers supply GCP service-account material as environment credentials
-(`GCP_CREDENTIALS_JSON`, optional `GCP_PROJECT`). Operator storage is
-`.storage/google/gcp.json` via `manager gcp credentials set`. Docker and
-Docker Compose are required to build and run the image.
+(`GCP_CREDENTIALS_JSON`, optional `GCP_PROJECT`). Prefer vault projection
+over writing `gcp.json` or `.env`. Docker and Docker Compose are required to
+build and run the image.
 
 ## Extension points
 None: this unit ships one vendor CLI console image and helper scripts only.

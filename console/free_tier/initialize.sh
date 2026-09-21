@@ -28,15 +28,6 @@ COMPUTE_SA_ROLES=(
   roles/artifactregistry.writer
 )
 
-# Operator that runs `gcloud builds submit` (often the same Compute SA stored
-# in .storage/google/gcp.json). Missing these is the
-# "forbidden from accessing the bucket … serviceusage.services.use" error.
-SUBMITTER_SA_ROLES=(
-  roles/serviceusage.serviceUsageConsumer
-  roles/cloudbuild.builds.editor
-  roles/storage.objectAdmin
-)
-
 usage() {
   cat <<'EOF'
 Usage:
@@ -62,12 +53,7 @@ Sets:
     cloudbuild.builds.builder, storage.admin
   IAM on PROJECT_NUMBER-compute@developer.gserviceaccount.com:
     storage.objectViewer, logging.logWriter, artifactregistry.writer
-    plus submitter roles: serviceusage.serviceUsageConsumer,
-    cloudbuild.builds.editor, storage.objectAdmin
-  IAM on the operator SA from GCP_CREDENTIALS_JSON (if different):
-    the same submitter roles
-  Staging bucket: gs://PROJECT_ID_cloudbuild (if missing) + objectAdmin
-    for the operator / compute SA
+  Staging bucket: gs://PROJECT_ID_cloudbuild (if missing)
 EOF
 }
 
@@ -155,44 +141,6 @@ bind_iam() {
     --quiet
 }
 
-operator_member() {
-  python3 -c '
-import json, os, sys
-raw = os.environ.get("GCP_CREDENTIALS_JSON") or ""
-if not raw:
-    sys.exit(1)
-try:
-    data = json.loads(raw)
-except json.JSONDecodeError:
-    sys.exit(1)
-email = str(data.get("client_email") or "").strip()
-if not email:
-    sys.exit(1)
-print("serviceAccount:" + email)
-'
-}
-
-bind_submitter_roles() {
-  local project="$1"
-  local member="$2"
-  echo "configuring Cloud Build submitter IAM for $member..."
-  for role in "${SUBMITTER_SA_ROLES[@]}"; do
-    bind_iam "$project" "$member" "$role"
-  done
-}
-
-grant_bucket_object_admin() {
-  local bucket="$1"
-  local member="$2"
-  local email="${member#serviceAccount:}"
-  echo "bucket iam: objectAdmin on gs://${bucket} for $email"
-  run_gcp gsutil iam ch "serviceAccount:${email}:objectAdmin" "gs://${bucket}" || \
-    run_gcp gcloud storage buckets add-iam-policy-binding "gs://${bucket}" \
-      --member="$member" \
-      --role="roles/storage.objectAdmin" \
-      --quiet
-}
-
 ensure_credentials
 PROJECT="$(project_id)"
 if [[ -z "$PROJECT" ]]; then
@@ -230,12 +178,6 @@ if [[ "$SKIP_IAM" -eq 0 ]]; then
   for role in "${COMPUTE_SA_ROLES[@]}"; do
     bind_iam "$PROJECT" "$COMPUTE_SA" "$role"
   done
-
-  bind_submitter_roles "$PROJECT" "$COMPUTE_SA"
-  OPERATOR_SA="$(operator_member || true)"
-  if [[ -n "${OPERATOR_SA:-}" && "$OPERATOR_SA" != "$COMPUTE_SA" ]]; then
-    bind_submitter_roles "$PROJECT" "$OPERATOR_SA"
-  fi
 else
   echo "skipping IAM bindings"
 fi
@@ -248,11 +190,6 @@ if [[ "$SKIP_BUCKET" -eq 0 ]]; then
   else
     echo "bucket: creating gs://${BUCKET} in ${REGION}"
     run_gcp gsutil mb -p "$PROJECT" -l "$REGION" "gs://${BUCKET}"
-  fi
-  grant_bucket_object_admin "$BUCKET" "$COMPUTE_SA"
-  OPERATOR_SA="$(operator_member || true)"
-  if [[ -n "${OPERATOR_SA:-}" && "$OPERATOR_SA" != "$COMPUTE_SA" ]]; then
-    grant_bucket_object_admin "$BUCKET" "$OPERATOR_SA"
   fi
 else
   echo "skipping staging bucket"

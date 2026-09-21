@@ -1,0 +1,9 @@
+version: 1
+layers:
+  fundamental: 0
+  language: 1
+  pattern: 2
+  tooling: 2
+  architecture: 3
+  framework: 4
+  project: 5
