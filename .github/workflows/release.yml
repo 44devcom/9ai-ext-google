@@ -1,0 +1,118 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+    branches:
+      - "release/v*.*.*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      PACKAGE_GIT_TOKEN: ${{ secrets.PACKAGE_GIT_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Git credentials for private sibling clones
+        run: |
+          set -eu
+          if [ -z "${PACKAGE_GIT_TOKEN:-}" ]; then
+            echo "PACKAGE_GIT_TOKEN is empty; private git.44dev.com clones will fail"
+          else
+            git config --global url."https://x-access-token:${PACKAGE_GIT_TOKEN}@git.44dev.com/".insteadOf "https://git.44dev.com/"
+          fi
+
+      - name: Parse version
+        id: ver
+        run: |
+          ref="${GITHUB_REF_NAME}"
+          ver="${ref#release/v}"
+          ver="${ver#v}"
+          echo "version=${ver}" >> "$GITHUB_OUTPUT"
+
+      - name: Match package version
+        run: |
+          python3 - "${{ steps.ver.outputs.version }}" <<'PY'
+          import json, pathlib, re, sys
+          ver = sys.argv[1]
+          errors = []
+          p = pathlib.Path("pyproject.toml")
+          if p.exists():
+              m = re.search(r'(?m)^version\s*=\s*"([^"]+)"', p.read_text(encoding="utf-8"))
+              if not m:
+                  errors.append('pyproject.toml has no version = "..."')
+              elif m.group(1) != ver:
+                  errors.append(f"pyproject.toml version {m.group(1)!r} != {ver!r}")
+          j = pathlib.Path("package.json")
+          if j.exists():
+              pkg_ver = json.loads(j.read_text(encoding="utf-8")).get("version")
+              if pkg_ver is None:
+                  errors.append("package.json has no version")
+              elif pkg_ver != ver:
+                  errors.append(f"package.json version {pkg_ver!r} != {ver!r}")
+          if errors:
+              sys.stderr.write("\n".join(errors) + "\n")
+              sys.exit(1)
+          PY
+
+      - name: Docker build
+        run: docker build -t 9ai-ext-google-console:release console/
+
+      - name: Slice CHANGELOG notes
+        run: |
+          python3 - "${{ steps.ver.outputs.version }}" "${RUNNER_TEMP}/release-notes.md" <<'PY'
+          import pathlib, re, sys
+          ver = sys.argv[1]
+          path = pathlib.Path("CHANGELOG.md")
+          if not path.exists():
+              sys.stderr.write("CHANGELOG.md missing; cannot slice release notes\n")
+              sys.exit(1)
+          text = path.read_text(encoding="utf-8")
+          pat = re.compile(
+              rf"^## \[{re.escape(ver)}\][^\n]*\n(.*?)(?=^## |\Z)",
+              re.MULTILINE | re.DOTALL,
+          )
+          m = pat.search(text)
+          if not m:
+              sys.stderr.write(f"CHANGELOG.md has no ## [{ver}] section\n")
+              sys.exit(1)
+          heading = text[m.start() :].split("\n", 1)[0]
+          pathlib.Path(sys.argv[2]).write_text(
+              f"# Release v{ver}\n\n{heading}\n{m.group(1).rstrip()}\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Tag from branch
+        if: github.ref_type == 'branch'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          tag="v${{ steps.ver.outputs.version }}"
+          if git rev-parse "$tag" >/dev/null 2>&1; then
+            echo "tag $tag already exists"
+          else
+            git tag -a "$tag" -m "Release ${{ steps.ver.outputs.version }}"
+            git push origin "$tag"
+          fi
+
+      - name: GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ver="${{ steps.ver.outputs.version }}"
+          tag="v${ver}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "release $tag already exists"
+            exit 0
+          fi
+          gh release create "$tag" --title "Release v${ver}" --notes-file "${RUNNER_TEMP}/release-notes.md"

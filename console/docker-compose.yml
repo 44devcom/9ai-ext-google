@@ -1,0 +1,12 @@
+services:
+  gcp:
+    image: hahu-gcp-console:local
+    build: .
+    stdin_open: true
+    tty: true
+    volumes:
+      # Monorepo root → /workspace
+      - ../../../../..:/workspace
+    environment:
+      - GCP_CREDENTIALS_JSON=${GCP_CREDENTIALS_JSON}
+      - GCP_PROJECT=${GCP_PROJECT:-}

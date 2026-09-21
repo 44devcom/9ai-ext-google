@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      PACKAGE_GIT_TOKEN: ${{ secrets.PACKAGE_GIT_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Git credentials for private sibling clones
+        run: |
+          set -eu
+          if [ -z "${PACKAGE_GIT_TOKEN:-}" ]; then
+            echo "PACKAGE_GIT_TOKEN is empty; private git.44dev.com clones will fail"
+          else
+            git config --global url."https://x-access-token:${PACKAGE_GIT_TOKEN}@git.44dev.com/".insteadOf "https://git.44dev.com/"
+          fi
+
+      - name: Docker build
+        run: docker build -t 9ai-ext-google-console:check console/
