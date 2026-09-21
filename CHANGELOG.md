@@ -8,15 +8,9 @@ Do not recap other units here.
 
 ## [Unreleased]
 
-### Changed
-
-- GCP-002: compose path reachability is for operators / `core/vault`
-  projection (no retired cloud backend package).
-
 ### Added
 
-- Unit `.rules/RULES.md` / `.rules/CONTRACT.md`, root README, and changelog
-  for the console-only GCP façade (EXT-004).
+### Changed
 
 ### Deprecated
 
@@ -25,3 +19,16 @@ Do not recap other units here.
 ### Fixed
 
 ### Security
+
+## [0.2.0] - 2026-09-21
+
+### Added
+
+- Unit `.rules/RULES.md` / `.rules/CONTRACT.md`, root README, and changelog
+  for the console-only GCP façade (EXT-004).
+
+### Changed
+
+- GCP-002: compose path reachability is for operators / `core/vault`
+  projection (no retired cloud backend package).
+
