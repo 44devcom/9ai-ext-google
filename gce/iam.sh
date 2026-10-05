@@ -7,7 +7,7 @@
 #   ./iam.sh enable-apis [--project ID]
 set -euo pipefail
 
-DEFAULT_SA_ID="9ai-remote-owner"
+DEFAULT_SA_ID="nineai-remote-owner"
 DEFAULT_DISPLAY="9ai remote owner"
 DEFAULT_KEY_OUT="./${DEFAULT_SA_ID}.key.json"
 
@@ -29,9 +29,9 @@ Usage:
   ./iam.sh --help
 
 Options:
-  --sa-id ID            Service account id (local part before @). Default: 9ai-remote-owner
+  --sa-id ID            Service account id (local part before @). Default: nineai-remote-owner
   --display-name NAME   Display name for create. Default: 9ai remote owner
-  --key-out PATH        Where to write a new key JSON (ensure-owner-sa). Default: ./9ai-remote-owner.key.json
+  --key-out PATH        Where to write a new key JSON (ensure-owner-sa). Default: ./nineai-remote-owner.key.json
   --no-key              Do not create or write a key file
   --project ID          GCP project (env, gcloud config, else first ACTIVE)
 
@@ -43,14 +43,27 @@ EOF
 
 die() { echo "error: $*" >&2; exit 1; }
 
+gac_project_id() {
+  local f="${GOOGLE_APPLICATION_CREDENTIALS:-}"
+  [[ -n "$f" && -f "$f" ]] || return 0
+  python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("project_id",""))' "$f" 2>/dev/null || true
+}
+
 require_gcloud() {
   command -v gcloud >/dev/null || die "gcloud required"
+  local gac="${GOOGLE_APPLICATION_CREDENTIALS:-}"
+  if [[ -n "$gac" && -f "$gac" ]]; then
+    gcloud auth activate-service-account --key-file="$gac" --quiet
+  fi
 }
 
 resolve_project() {
   local p="${PROJECT:-}"
   if [[ -z "$p" || "$p" == "(unset)" ]]; then
     p="${GOOGLE_CLOUD_PROJECT:-${CLOUDSDK_CORE_PROJECT:-${DEVSHELL_PROJECT_ID:-}}}"
+  fi
+  if [[ -z "$p" || "$p" == "(unset)" ]]; then
+    p=$(gac_project_id)
   fi
   if [[ -z "$p" || "$p" == "(unset)" ]]; then
     p=$(gcloud config get-value project 2>/dev/null || true)
@@ -93,7 +106,8 @@ ensure_sa() {
     gcloud iam service-accounts create "$sa_id" \
       --project="$project" \
       --display-name="$display" \
-      --quiet
+      --quiet \
+      || die "failed to create service account ${email} (id must match [a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9])"
   fi
   printf '%s\n' "$email"
 }

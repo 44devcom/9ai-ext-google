@@ -6,4 +6,4 @@ Run (no project picker; prints the Owner key JSON):
 If the tutorial panel is missing:  cloudshell launch-tutorial tutorial.md
 If clone failed (private fork / prompts disabled):  ./cloudshell-start.sh
 
-That writes ./9ai-remote-owner.key.json (roles/owner). Do not commit the key.
+That writes ./nineai-remote-owner.key.json (roles/owner). Do not commit the key.

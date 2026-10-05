@@ -99,7 +99,7 @@ launch_tutorial() {
   elif command -v teachme >/dev/null 2>&1; then
     teachme tutorial.md
   else
-    echo "Tutorial launcher not found. Key JSON is on stdout / ./9ai-remote-owner.key.json" >&2
+    echo "Tutorial launcher not found. Key JSON is on stdout / ./nineai-remote-owner.key.json" >&2
   fi
 }
 

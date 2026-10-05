@@ -21,7 +21,7 @@ Do not recap other units here.
   (auto-selects an active GCP project, no picker; prints Owner key JSON).
 - Open in Cloud Shell button (workspace `gce`) on root README and
   `gce/README.md`.
-- `gce/iam.sh` to enable APIs, create/reuse `9ai-remote-owner` service
+- `gce/iam.sh` to enable APIs, create/reuse `nineai-remote-owner` service
   account, grant `roles/owner`, and write a gitignored key JSON for remote
   `gcloud` manage (`ensure-owner-sa`, `show`, `grant-owner`, `enable-apis`).
 - `gce/lib.sh` idempotent GCE ensure/delete helpers for Cloud Shell deploy
@@ -36,8 +36,7 @@ Do not recap other units here.
 
 ### Fixed
 
-- `gce/iam.sh` `resolve_project` uses env / gcloud config / first ACTIVE
-  project and `gcloud config set project --quiet`. Bootstrap prints the
-  Owner key JSON on stdout with no prompts.
+- Owner SA id is `nineai-remote-owner` (GCP rejects ids that start with a
+  digit, so `9ai-remote-owner` never created and no key JSON was written).
 
 ### Security

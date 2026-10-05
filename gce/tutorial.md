@@ -2,8 +2,8 @@
 
 This tutorial runs after **Open in Cloud Shell**. There is no project picker.
 `./cloudshell-bootstrap.sh` selects an active GCP project, creates or reuses
-`9ai-remote-owner`, and prints the key JSON (also written to
-`./9ai-remote-owner.key.json`; do not commit).
+`nineai-remote-owner`, and prints the key JSON (also written to
+`./nineai-remote-owner.key.json`; do not commit).
 
 If auto-clone failed (`terminal prompts disabled` on a private fork):
 
@@ -17,12 +17,12 @@ gh auth login -p https -w && chmod 755 cloudshell-start.sh && ./cloudshell-start
 chmod 755 lib.sh iam.sh cloudshell-bootstrap.sh && ./cloudshell-bootstrap.sh
 ```
 
-Copy the JSON from the terminal, or download `9ai-remote-owner.key.json`.
+Copy the JSON from the terminal, or download `nineai-remote-owner.key.json`.
 
 On a laptop or CI host:
 
 ```bash
-gcloud auth activate-service-account --key-file=./9ai-remote-owner.key.json
+gcloud auth activate-service-account --key-file=./nineai-remote-owner.key.json
 ```
 
 Store the key in vault or a secrets manager. Revoke unused keys with

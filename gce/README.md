@@ -7,7 +7,7 @@ Bash libraries for Cloud Shell / operator deploy scripts.
 That link opens workspace `gce`, prints [`cloudshell-print.txt`](cloudshell-print.txt),
 and launches [`tutorial.md`](tutorial.md). There is no project picker. Run
 [`cloudshell-bootstrap.sh`](cloudshell-bootstrap.sh): it selects an active GCP
-project, writes `./9ai-remote-owner.key.json`, and prints the JSON.
+project, writes `./nineai-remote-owner.key.json`, and prints the JSON.
 
 If the tutorial panel is missing: `cloudshell launch-tutorial tutorial.md`.
 If auto-clone fails (`terminal prompts disabled`): `gh auth login` then
@@ -77,8 +77,8 @@ Project also comes from `GOOGLE_CLOUD_PROJECT` / `CLOUDSDK_CORE_PROJECT` /
 Activate the key elsewhere:
 
 ```bash
-gcloud auth activate-service-account --key-file=./9ai-remote-owner.key.json
-# or: export GOOGLE_APPLICATION_CREDENTIALS=$PWD/9ai-remote-owner.key.json
+gcloud auth activate-service-account --key-file=./nineai-remote-owner.key.json
+# or: export GOOGLE_APPLICATION_CREDENTIALS=$PWD/nineai-remote-owner.key.json
 ```
 
 Do **not** commit the key. Prefer vault / a secrets store after download.
