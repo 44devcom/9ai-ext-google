@@ -27,7 +27,10 @@ service name `gcp`. GCE library path `gce/lib.sh` and function names
 `gce_ensure_*` / `gce_delete_*` are a breaking-change surface for deploy
 callers (for example 9ai-network). `gce/iam.sh` subcommands
 `ensure-owner-sa`, `show`, `grant-owner`, `enable-apis` are a
-breaking-change surface for operators. Paths `gce/tutorial.md`,
+breaking-change surface for operators. `gce/ssh-vps.sh` name, `--delete`,
+`--dry-run`, `--extra-ports`, `--ssh-pubkey`, and `ssh=` / `static_ip=` lines
+are a breaking-change surface for operators. `console/run.sh` is the host
+entry that runs gcloud inside the console image (no host gcloud). Paths `gce/tutorial.md`,
 `gce/cloudshell-bootstrap.sh`, and `gce/cloudshell-print.txt` are stable
 Open in Cloud Shell surfaces.
 

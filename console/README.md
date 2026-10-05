@@ -57,7 +57,16 @@ gcloud config get-value project
 gsutil ls
 ```
 
-### One-shot commands
+### One-shot commands (no host gcloud)
+
+```bash
+GCP_CREDENTIALS_FILE=/path/to/sa.json ./run.sh gcloud auth list
+GCP_CREDENTIALS_FILE=/path/to/sa.json ./run.sh /ext-google/gce/ssh-vps.sh vpnbox1
+```
+
+Host `gcloud` is not required. Docker is.
+
+### One-shot commands (compose)
 
 ```bash
 docker compose run --rm gcp gcloud auth list

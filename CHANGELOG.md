@@ -17,6 +17,12 @@ Do not recap other units here.
 
 ### Added
 
+- `gce/ssh-vps.sh` create/reuse Debian GCE VM + static IP + TCP 22 (optional
+  `--extra-ports`, `--ssh-pubkey`). No startup-script. If host has no
+  `gcloud`, wraps `console/run.sh` (Docker console). Tests: `gce/test-ssh-vps.sh`.
+- `console/run.sh` one-shot GCP CLI in `hahu-gcp-console:local`. Host gcloud
+  is not required. Tests: `console/test-run.sh`.
+
 - Open in Cloud Shell opens workspace `gce`, which auto-runs
   `gce/cloudshell-bootstrap.sh` via `.vscode/tasks.json` `folderOpen`.
 - Open in Cloud Shell button (workspace `gce`) on root README and

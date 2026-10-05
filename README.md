@@ -9,6 +9,9 @@ kit. Surfaces:
 - Docker console in [`console/`](console/)
 - Idempotent GCE helpers in [`gce/`](gce/) (`gce/lib.sh`) for Cloud Shell /
   operator deploy scripts (create-or-reuse network, address, firewall, VM)
+- SSH VPS operator script [`gce/ssh-vps.sh`](gce/ssh-vps.sh) (Debian VM +
+  static IP + TCP 22; no startup-script; uses [`console/run.sh`](console/run.sh)
+  so host gcloud is not required)
 - Owner service-account bootstrap in [`gce/iam.sh`](gce/iam.sh) for remote
   manage
 

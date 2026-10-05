@@ -15,6 +15,26 @@ If the tutorial panel is missing: `cloudshell launch-tutorial tutorial.md`.
 If auto-clone fails (`terminal prompts disabled`): `gh auth login` then
 [`cloudshell-start.sh`](cloudshell-start.sh) (runs bootstrap).
 
+## SSH VPS (no application install)
+
+[`ssh-vps.sh`](ssh-vps.sh) creates or reuses a Debian VM, static IP, and TCP 22.
+It does **not** clone software or set a startup-script. Install a router
+afterwards over SSH (for example
+`vpnbox setup --role router --method ssh --router debian@IP`).
+
+```bash
+chmod 755 *.sh
+./ssh-vps.sh vpnbox1
+./ssh-vps.sh vpnbox1 --extra-ports tcp:9418,udp:1194
+./ssh-vps.sh vpnbox1 --dry-run
+./ssh-vps.sh vpnbox1 --delete
+```
+
+Prints `ssh=debian@<static-ip>` and `static_ip=`. Host **gcloud is not
+required**: without it, the script re-enters through
+[`../console/run.sh`](../console/run.sh) (Docker console image). Tests:
+`bash gce/test-ssh-vps.sh` and `bash console/test-run.sh`.
+
 ## Idempotent GCE resources
 
 Source from an operator deploy script (for example 9ai-network Cloud Shell
