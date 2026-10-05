@@ -89,8 +89,9 @@ launch_tutorial() {
   [[ -d "$gce" ]] || die "missing ${gce}"
   cd "$gce"
   chmod 755 lib.sh iam.sh cloudshell-bootstrap.sh cloudshell-start.sh 2>/dev/null || true
+  ./cloudshell-bootstrap.sh
   if [[ "$LAUNCH_TUTORIAL" != 1 ]]; then
-    echo "cwd=${gce} (tutorial skipped; LAUNCH_TUTORIAL=0)"
+    echo "cwd=${gce} (tutorial skipped; LAUNCH_TUTORIAL=0)" >&2
     return 0
   fi
   if command -v cloudshell >/dev/null 2>&1; then
@@ -98,12 +99,10 @@ launch_tutorial() {
   elif command -v teachme >/dev/null 2>&1; then
     teachme tutorial.md
   else
-    echo "Tutorial launcher not found. Open tutorial.md manually or run:"
-    echo "  ./cloudshell-bootstrap.sh"
+    echo "Tutorial launcher not found. Key JSON is on stdout / ./9ai-remote-owner.key.json" >&2
   fi
 }
 
 ensure_github_auth
 ensure_clone
 launch_tutorial
-echo "next: complete project setup in the tutorial, then ./cloudshell-bootstrap.sh"

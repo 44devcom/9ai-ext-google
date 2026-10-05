@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
-# One-shot Cloud Shell bootstrap: Owner SA + show.
-# Prefer the Open in Cloud Shell tutorial; run this from the clickable step.
+# Non-interactive Cloud Shell bootstrap: pick an active GCP project, Owner SA,
+# write ./9ai-remote-owner.key.json and print the JSON on stdout.
 set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
 chmod 755 lib.sh iam.sh cloudshell-bootstrap.sh
 ./iam.sh ensure-owner-sa "$@"
-./iam.sh show

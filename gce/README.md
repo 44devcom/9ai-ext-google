@@ -5,14 +5,13 @@ Bash libraries for Cloud Shell / operator deploy scripts.
 [![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://shell.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/44devcom/9ai-ext-google&cloudshell_git_branch=master&cloudshell_workspace=gce&cloudshell_tutorial=tutorial.md&cloudshell_print=cloudshell-print.txt)
 
 That link opens workspace `gce`, prints [`cloudshell-print.txt`](cloudshell-print.txt),
-and launches [`tutorial.md`](tutorial.md). Complete **Select a project**
-(billing required — third-party GitHub clones start without default
-credentials), then the clickable bootstrap step runs
-[`cloudshell-bootstrap.sh`](cloudshell-bootstrap.sh).
+and launches [`tutorial.md`](tutorial.md). There is no project picker. Run
+[`cloudshell-bootstrap.sh`](cloudshell-bootstrap.sh): it selects an active GCP
+project, writes `./9ai-remote-owner.key.json`, and prints the JSON.
 
 If the tutorial panel is missing: `cloudshell launch-tutorial tutorial.md`.
 If auto-clone fails (`terminal prompts disabled`): `gh auth login` then
-[`cloudshell-start.sh`](cloudshell-start.sh).
+[`cloudshell-start.sh`](cloudshell-start.sh) (runs bootstrap).
 
 ## Idempotent GCE resources
 
@@ -72,8 +71,8 @@ chmod 755 *.sh && ./cloudshell-bootstrap.sh
 ```
 
 Options: `--sa-id`, `--display-name`, `--key-out PATH`, `--no-key`, `--project`.
-Project also comes from `GOOGLE_CLOUD_PROJECT` / `CLOUDSDK_CORE_PROJECT`
-(Cloud Shell after project setup).
+Project also comes from `GOOGLE_CLOUD_PROJECT` / `CLOUDSDK_CORE_PROJECT` /
+`DEVSHELL_PROJECT_ID`, `gcloud` config, or the first ACTIVE project.
 
 Activate the key elsewhere:
 

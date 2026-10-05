@@ -33,7 +33,7 @@ Options:
   --display-name NAME   Display name for create. Default: 9ai remote owner
   --key-out PATH        Where to write a new key JSON (ensure-owner-sa). Default: ./9ai-remote-owner.key.json
   --no-key              Do not create or write a key file
-  --project ID          GCP project (default: gcloud config core/project)
+  --project ID          GCP project (env, gcloud config, else first ACTIVE)
 
 Requires a logged-in principal that can create service accounts and set project
 IAM (typically your user Owner). The resulting key is for remote automation —
@@ -49,13 +49,23 @@ require_gcloud() {
 
 resolve_project() {
   local p="${PROJECT:-}"
-  if [[ -z "$p" ]]; then
-    p="${GOOGLE_CLOUD_PROJECT:-${CLOUDSDK_CORE_PROJECT:-}}"
+  if [[ -z "$p" || "$p" == "(unset)" ]]; then
+    p="${GOOGLE_CLOUD_PROJECT:-${CLOUDSDK_CORE_PROJECT:-${DEVSHELL_PROJECT_ID:-}}}"
   fi
   if [[ -z "$p" || "$p" == "(unset)" ]]; then
     p=$(gcloud config get-value project 2>/dev/null || true)
   fi
-  [[ -n "$p" && "$p" != "(unset)" ]] || die "set --project, GOOGLE_CLOUD_PROJECT, or gcloud config set project"
+  if [[ -z "$p" || "$p" == "(unset)" ]]; then
+    p=$(gcloud projects list \
+      --filter='lifecycleState:ACTIVE' \
+      --format='value(projectId)' \
+      --sort-by=projectId \
+      --limit=1 \
+      --quiet 2>/dev/null || true)
+  fi
+  [[ -n "$p" && "$p" != "(unset)" ]] \
+    || die "no active GCP project (not logged in, or no projects)"
+  gcloud config set project "$p" --quiet
   printf '%s\n' "$p"
 }
 
@@ -67,10 +77,10 @@ sa_email() {
 cmd_enable_apis() {
   local project
   project=$(resolve_project)
-  echo "project=${project}"
-  echo "enabling APIs: ${APIS[*]}"
+  echo "project=${project}" >&2
+  echo "enabling APIs: ${APIS[*]}" >&2
   gcloud services enable "${APIS[@]}" --project="$project" --quiet
-  echo "apis enabled"
+  echo "apis enabled" >&2
 }
 
 ensure_sa() {
@@ -90,30 +100,30 @@ ensure_sa() {
 
 grant_owner() {
   local project="$1" email="$2"
-  echo "ensuring roles/owner for ${email} on ${project}"
+  echo "ensuring roles/owner for ${email} on ${project}" >&2
   gcloud projects add-iam-policy-binding "$project" \
     --member="serviceAccount:${email}" \
     --role="roles/owner" \
     --condition=None \
     --quiet >/dev/null
-  echo "owner binding ok"
+  echo "owner binding ok" >&2
 }
 
 write_key() {
   local project="$1" email="$2" out="$3"
   if [[ -f "$out" ]]; then
     echo "key file already exists: ${out} (not overwritten)" >&2
-    return 0
+  else
+    mkdir -p "$(dirname "$out")"
+    echo "creating key -> ${out}" >&2
+    gcloud iam service-accounts keys create "$out" \
+      --iam-account="$email" \
+      --project="$project" \
+      --quiet
+    chmod 600 "$out"
+    echo "key_written=${out}" >&2
   fi
-  mkdir -p "$(dirname "$out")"
-  echo "creating key -> ${out}"
-  gcloud iam service-accounts keys create "$out" \
-    --iam-account="$email" \
-    --project="$project" \
-    --quiet
-  chmod 600 "$out"
-  echo "key_written=${out}"
-  echo "activate: gcloud auth activate-service-account --key-file=${out}"
+  cat "$out"
 }
 
 cmd_ensure_owner_sa() {
@@ -130,11 +140,11 @@ cmd_ensure_owner_sa() {
   if [[ "$no_key" != 1 ]]; then
     write_key "$project" "$email" "$key_out"
   else
-    echo "skipping key (--no-key)"
+    echo "skipping key (--no-key)" >&2
   fi
-  echo "service_account=${email}"
-  echo "project=${project}"
-  echo "use with: export GOOGLE_APPLICATION_CREDENTIALS=${key_out}"
+  echo "service_account=${email}" >&2
+  echo "project=${project}" >&2
+  echo "use with: export GOOGLE_APPLICATION_CREDENTIALS=${key_out}" >&2
 }
 
 cmd_grant_owner() {

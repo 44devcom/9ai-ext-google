@@ -17,8 +17,8 @@ Do not recap other units here.
 
 ### Added
 
-- Open in Cloud Shell launches `gce/tutorial.md` (project setup + bootstrap)
-  with `cloudshell_print` banner and `gce/cloudshell-bootstrap.sh`.
+- Open in Cloud Shell launches `gce/tutorial.md` and `gce/cloudshell-bootstrap.sh`
+  (auto-selects an active GCP project, no picker; prints Owner key JSON).
 - Open in Cloud Shell button (workspace `gce`) on root README and
   `gce/README.md`.
 - `gce/iam.sh` to enable APIs, create/reuse `9ai-remote-owner` service
@@ -36,8 +36,8 @@ Do not recap other units here.
 
 ### Fixed
 
-- Open in Cloud Shell auto-clones the public GitHub repo again (`git_repo`,
-  workspace `gce`, tutorial, print). `gce/cloudshell-start.sh` remains the
-  fallback when a private fork cannot auto-clone (`terminal prompts disabled`).
+- `gce/iam.sh` `resolve_project` uses env / gcloud config / first ACTIVE
+  project and `gcloud config set project --quiet`. Bootstrap prints the
+  Owner key JSON on stdout with no prompts.
 
 ### Security
