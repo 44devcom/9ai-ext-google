@@ -15,6 +15,9 @@ Do not recap other units here.
 
 ### Added
 
+- `gce/lib.sh` idempotent GCE ensure/delete helpers for Cloud Shell deploy
+  callers (`gce_ensure_network`, `gce_ensure_address`, `gce_ensure_firewall`,
+  `gce_ensure_instance`, matching `gce_delete_*`).
 - Unit `.rules/RULES.md` / `.rules/CONTRACT.md`, root README, and changelog
   for the console-only GCP façade (EXT-004).
 

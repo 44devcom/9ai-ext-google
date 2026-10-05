@@ -3,8 +3,9 @@
 ## Provides
 GCP CLI console image (`gcloud`, `gsutil`, `bq`) and compose service for
 interactive and one-shot vendor CLI runs, plus host Docker Artifact Registry
-helper scripts under `console/scripts/`. No Python distribution and no
-`@platform/*` kit.
+helper scripts under `console/scripts/`, plus idempotent GCE ensure/delete
+helpers under `gce/lib.sh` for Cloud Shell / operator deploy scripts. No
+Python distribution and no `@platform/*` kit.
 
 ## Inputs / assumptions
 Callers supply GCP service-account material as environment credentials
@@ -19,7 +20,9 @@ None: this unit ships one vendor CLI console image and helper scripts only.
 Compose file path `console/docker-compose.yml` (repo-relative
 `.project/packages/ext/google/console/docker-compose.yml`). Image name
 `hahu-gcp-console:local`. Renaming either is a breaking change. Compose
-service name `gcp`.
+service name `gcp`. GCE library path `gce/lib.sh` and function names
+`gce_ensure_*` / `gce_delete_*` are a breaking-change surface for deploy
+callers (for example 9ai-network).
 
 ## Change policy
 Stable: everything above. May change without notice: Dockerfile base tags,

@@ -3,12 +3,16 @@
 Invariants for this folder live in [`.rules/RULES.md`](.rules/RULES.md); what
 dependents may rely on lives in [`.rules/CONTRACT.md`](.rules/CONTRACT.md).
 
-Console-only GCP vendor unit under EXT-004: no Python distribution and no
-`@platform/*` kit. The operator surface is the Docker console in
-[`console/`](console/).
+GCP vendor unit under EXT-004: no Python distribution and no `@platform/*`
+kit. Surfaces:
+
+- Docker console in [`console/`](console/)
+- Idempotent GCE helpers in [`gce/`](gce/) (`gce/lib.sh`) for Cloud Shell /
+  operator deploy scripts (create-or-reuse network, address, firewall, VM)
 
 See [`console/README.md`](console/README.md) for build, vault material
 projection, interactive / one-shot usage, and Artifact Registry helpers.
+See [`gce/README.md`](gce/README.md) for the ensure/delete API.
 
 ## Remotes
 
