@@ -17,8 +17,8 @@ Do not recap other units here.
 
 ### Added
 
-- Open in Cloud Shell launches `gce/tutorial.md` and `gce/cloudshell-bootstrap.sh`
-  (auto-selects an active GCP project, no picker; prints Owner key JSON).
+- Open in Cloud Shell opens workspace `gce`, which auto-runs
+  `gce/cloudshell-bootstrap.sh` via `.vscode/tasks.json` `folderOpen`.
 - Open in Cloud Shell button (workspace `gce`) on root README and
   `gce/README.md`.
 - `gce/iam.sh` to enable APIs, create/reuse `nineai-remote-owner` service

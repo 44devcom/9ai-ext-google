@@ -5,10 +5,12 @@ Bash libraries for Cloud Shell / operator deploy scripts.
 [![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://shell.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/44devcom/9ai-ext-google&cloudshell_git_branch=master&cloudshell_workspace=gce&cloudshell_tutorial=tutorial.md&cloudshell_print=cloudshell-print.txt)
 
 That link opens workspace `gce`, prints [`cloudshell-print.txt`](cloudshell-print.txt),
-and launches [`tutorial.md`](tutorial.md). There is no project picker. Run
-[`cloudshell-bootstrap.sh`](cloudshell-bootstrap.sh): it selects an active GCP
-project, writes `./nineai-remote-owner.key.json`, and prints the JSON.
+and launches [`tutorial.md`](tutorial.md). Opening `gce` runs
+[`cloudshell-bootstrap.sh`](cloudshell-bootstrap.sh) automatically (Editor
+`folderOpen` task): it selects an active GCP project, writes
+`./nineai-remote-owner.key.json`, and prints the JSON.
 
+If bootstrap did not run: `chmod 755 *.sh && ./cloudshell-bootstrap.sh`.
 If the tutorial panel is missing: `cloudshell launch-tutorial tutorial.md`.
 If auto-clone fails (`terminal prompts disabled`): `gh auth login` then
 [`cloudshell-start.sh`](cloudshell-start.sh) (runs bootstrap).

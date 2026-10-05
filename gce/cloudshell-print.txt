@@ -1,9 +1,8 @@
 9ai-ext-google / gce — Cloud Shell
 
-Run (no project picker; prints the Owner key JSON):
-  chmod 755 *.sh && ./cloudshell-bootstrap.sh
+Bootstrap runs automatically when this workspace opens (Owner key JSON
+in the terminal and ./nineai-remote-owner.key.json). Do not commit the key.
 
+If it did not run:  chmod 755 *.sh && ./cloudshell-bootstrap.sh
 If the tutorial panel is missing:  cloudshell launch-tutorial tutorial.md
 If clone failed (private fork / prompts disabled):  ./cloudshell-start.sh
-
-That writes ./nineai-remote-owner.key.json (roles/owner). Do not commit the key.

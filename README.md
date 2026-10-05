@@ -15,10 +15,12 @@ kit. Surfaces:
 [![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://shell.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/44devcom/9ai-ext-google&cloudshell_git_branch=master&cloudshell_workspace=gce&cloudshell_tutorial=tutorial.md&cloudshell_print=cloudshell-print.txt)
 
 The button clones this repo, opens `gce/`, prints a short banner, and launches
-[`gce/tutorial.md`](gce/tutorial.md). Run `./cloudshell-bootstrap.sh`: it picks
-an active GCP project (no picker), writes the Owner SA key, and prints the
-JSON. If auto-clone fails (`terminal prompts disabled` on a private fork),
-run [`gce/cloudshell-start.sh`](gce/cloudshell-start.sh) after `gh auth login`
+[`gce/tutorial.md`](gce/tutorial.md). Opening the `gce` workspace runs
+[`gce/cloudshell-bootstrap.sh`](gce/cloudshell-bootstrap.sh) automatically
+(Cloud Shell Editor `folderOpen` task): it picks an active GCP project, writes
+the Owner SA key, and prints the JSON. If auto-clone fails (`terminal
+prompts disabled` on a private fork), run
+[`gce/cloudshell-start.sh`](gce/cloudshell-start.sh) after `gh auth login`
 (that path also runs bootstrap). Without Cloud Shell, use
 `./gce/iam.sh ensure-owner-sa` on any host with your user Owner login.
 

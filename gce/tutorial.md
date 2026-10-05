@@ -1,8 +1,8 @@
 # 9ai-ext-google: Owner SA for remote manage
 
-This tutorial runs after **Open in Cloud Shell**. There is no project picker.
-`./cloudshell-bootstrap.sh` selects an active GCP project, creates or reuses
-`nineai-remote-owner`, and prints the key JSON (also written to
+This tutorial runs after **Open in Cloud Shell**. Bootstrap starts with the
+workspace (no project picker): it selects an active GCP project, creates or
+reuses `nineai-remote-owner`, and prints the key JSON (also written to
 `./nineai-remote-owner.key.json`; do not commit).
 
 If auto-clone failed (`terminal prompts disabled` on a private fork):
@@ -11,7 +11,9 @@ If auto-clone failed (`terminal prompts disabled` on a private fork):
 gh auth login -p https -w && chmod 755 cloudshell-start.sh && ./cloudshell-start.sh
 ```
 
-## Write Owner key
+## Owner key
+
+If the JSON is not in the terminal yet, run:
 
 ```bash
 chmod 755 lib.sh iam.sh cloudshell-bootstrap.sh && ./cloudshell-bootstrap.sh
