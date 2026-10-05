@@ -2,7 +2,15 @@
 
 Bash libraries for Cloud Shell / operator deploy scripts.
 
-[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://shell.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/44devcom/9ai-ext-google&cloudshell_workspace=gce)
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://shell.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/44devcom/9ai-ext-google&cloudshell_git_branch=master&cloudshell_workspace=gce&cloudshell_tutorial=tutorial.md&cloudshell_print=cloudshell-print.txt)
+
+That link opens workspace `gce`, prints [`cloudshell-print.txt`](cloudshell-print.txt),
+and launches [`tutorial.md`](tutorial.md). Complete **Select a project**
+(billing required — third-party GitHub clones start without default
+credentials), then the clickable bootstrap step runs
+[`cloudshell-bootstrap.sh`](cloudshell-bootstrap.sh).
+
+If the tutorial panel is missing: `cloudshell launch-tutorial tutorial.md`.
 
 ## Idempotent GCE resources
 
@@ -44,23 +52,26 @@ Requires `gcloud` on `PATH` and an authenticated project.
 ## Owner service account (remote manage)
 
 [`iam.sh`](iam.sh) creates or reuses a project **Owner** service account and
-optionally writes a key JSON for remote `gcloud` / automation (Cloud Shell,
-CI, laptop).
+optionally writes a key JSON for remote `gcloud` / automation.
+
+**Cloud Shell (primary):** use the Open button and tutorial above, or:
 
 ```bash
-# In Cloud Shell (or any host with gcloud + your user Owner login):
-gcloud auth login
-gcloud config set project YOUR_PROJECT
-chmod 755 *.sh iam.sh
-./iam.sh ensure-owner-sa
-# writes ./9ai-remote-owner.key.json (gitignored) and binds roles/owner
+chmod 755 *.sh && ./cloudshell-bootstrap.sh
+```
 
+**Any host (fallback)** with `gcloud` and your user Owner login:
+
+```bash
+./iam.sh ensure-owner-sa
 ./iam.sh show
 ./iam.sh grant-owner          # re-apply owner if IAM drifted
 ./iam.sh enable-apis          # IAM / Compute / Resource Manager only
 ```
 
 Options: `--sa-id`, `--display-name`, `--key-out PATH`, `--no-key`, `--project`.
+Project also comes from `GOOGLE_CLOUD_PROJECT` / `CLOUDSDK_CORE_PROJECT`
+(Cloud Shell after project setup).
 
 Activate the key elsewhere:
 

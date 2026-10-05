@@ -1,0 +1,11 @@
+9ai-ext-google / gce — Cloud Shell
+
+The walkthrough tutorial should open automatically.
+If it did not:  cloudshell launch-tutorial tutorial.md
+
+1) Complete "Select a project" (billing required).
+2) Run the bootstrap step, or:
+     chmod 755 *.sh && ./cloudshell-bootstrap.sh
+
+That creates 9ai-remote-owner (roles/owner) and ./9ai-remote-owner.key.json
+Do not commit the key.

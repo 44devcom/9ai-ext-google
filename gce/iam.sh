@@ -50,9 +50,12 @@ require_gcloud() {
 resolve_project() {
   local p="${PROJECT:-}"
   if [[ -z "$p" ]]; then
+    p="${GOOGLE_CLOUD_PROJECT:-${CLOUDSDK_CORE_PROJECT:-}}"
+  fi
+  if [[ -z "$p" || "$p" == "(unset)" ]]; then
     p=$(gcloud config get-value project 2>/dev/null || true)
   fi
-  [[ -n "$p" && "$p" != "(unset)" ]] || die "set --project or gcloud config set project"
+  [[ -n "$p" && "$p" != "(unset)" ]] || die "set --project, GOOGLE_CLOUD_PROJECT, or gcloud config set project"
   printf '%s\n' "$p"
 }
 

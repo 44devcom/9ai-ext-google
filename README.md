@@ -12,11 +12,12 @@ kit. Surfaces:
 - Owner service-account bootstrap in [`gce/iam.sh`](gce/iam.sh) for remote
   manage
 
-[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://shell.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/44devcom/9ai-ext-google&cloudshell_workspace=gce)
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://shell.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/44devcom/9ai-ext-google&cloudshell_git_branch=master&cloudshell_workspace=gce&cloudshell_tutorial=tutorial.md&cloudshell_print=cloudshell-print.txt)
 
-In Cloud Shell: `gcloud auth login`, set the project, then
-`./iam.sh ensure-owner-sa` for a downloadable Owner key, or source `lib.sh`
-from other deploy packs.
+The button clones this repo, opens `gce/`, prints a short banner, and launches
+[`gce/tutorial.md`](gce/tutorial.md): select a billed project, then run
+`./cloudshell-bootstrap.sh` (Owner SA + key). Without Cloud Shell, use
+`./gce/iam.sh ensure-owner-sa` on any host with your user Owner login.
 
 See [`console/README.md`](console/README.md) for build, vault material
 projection, interactive / one-shot usage, and Artifact Registry helpers.

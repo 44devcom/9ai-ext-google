@@ -17,6 +17,8 @@ Do not recap other units here.
 
 ### Added
 
+- Open in Cloud Shell launches `gce/tutorial.md` (project setup + bootstrap)
+  with `cloudshell_print` banner and `gce/cloudshell-bootstrap.sh`.
 - Open in Cloud Shell button (workspace `gce`) on root README and
   `gce/README.md`.
 - `gce/iam.sh` to enable APIs, create/reuse `9ai-remote-owner` service

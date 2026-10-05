@@ -6,7 +6,9 @@ interactive and one-shot vendor CLI runs, plus host Docker Artifact Registry
 helper scripts under `console/scripts/`, plus idempotent GCE ensure/delete
 helpers under `gce/lib.sh` for Cloud Shell / operator deploy scripts, plus
 `gce/iam.sh` to create/reuse a project Owner service account and key for
-remote management. No Python distribution and no `@platform/*` kit.
+remote management, plus Cloud Shell surfaces `gce/tutorial.md`,
+`gce/cloudshell-bootstrap.sh`, and `gce/cloudshell-print.txt`. No Python
+distribution and no `@platform/*` kit.
 
 ## Inputs / assumptions
 Callers supply GCP service-account material as environment credentials
@@ -25,7 +27,9 @@ service name `gcp`. GCE library path `gce/lib.sh` and function names
 `gce_ensure_*` / `gce_delete_*` are a breaking-change surface for deploy
 callers (for example 9ai-network). `gce/iam.sh` subcommands
 `ensure-owner-sa`, `show`, `grant-owner`, `enable-apis` are a
-breaking-change surface for operators.
+breaking-change surface for operators. Paths `gce/tutorial.md`,
+`gce/cloudshell-bootstrap.sh`, and `gce/cloudshell-print.txt` are stable
+Open in Cloud Shell surfaces.
 
 ## Change policy
 Stable: everything above. May change without notice: Dockerfile base tags,
