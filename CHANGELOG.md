@@ -10,6 +10,8 @@ Do not recap other units here.
 
 ### Changed
 
+- `gce_ensure_instance` create path disables shielded vTPM and Integrity
+  Monitoring (`--no-shielded-vtpm`, `--no-shielded-integrity-monitoring`).
 - GCP-002: compose path reachability is for operators / `core/vault`
   projection (no retired cloud backend package).
 

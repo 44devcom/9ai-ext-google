@@ -83,6 +83,8 @@ gce_ensure_instance() {
 
   gcloud compute instances create "$vm" \
     --zone="$zone" \
+    --no-shielded-vtpm \
+    --no-shielded-integrity-monitoring \
     "${create_extra[@]}" \
     "${meta[@]}" \
     --quiet

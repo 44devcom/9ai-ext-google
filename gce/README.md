@@ -22,6 +22,10 @@ gce_ensure_instance "${NAME}-vm" "$ZONE" \
   --metadata-from-file="startup-script=${STARTUP_TMP}"
 ```
 
+On create, `gce_ensure_instance` always passes `--no-shielded-vtpm` and
+`--no-shielded-integrity-monitoring` (vTPM and Integrity Monitoring off).
+Secure Boot is left at the image/API default.
+
 When the instance already exists, `gce_ensure_instance` refreshes
 `--metadata*` args via `add-metadata` and runs `instances reset` (same disk
 and reserved IP).
