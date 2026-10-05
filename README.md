@@ -9,10 +9,19 @@ kit. Surfaces:
 - Docker console in [`console/`](console/)
 - Idempotent GCE helpers in [`gce/`](gce/) (`gce/lib.sh`) for Cloud Shell /
   operator deploy scripts (create-or-reuse network, address, firewall, VM)
+- Owner service-account bootstrap in [`gce/iam.sh`](gce/iam.sh) for remote
+  manage
+
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://shell.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/44devcom/9ai-ext-google&cloudshell_workspace=gce)
+
+In Cloud Shell: `gcloud auth login`, set the project, then
+`./iam.sh ensure-owner-sa` for a downloadable Owner key, or source `lib.sh`
+from other deploy packs.
 
 See [`console/README.md`](console/README.md) for build, vault material
 projection, interactive / one-shot usage, and Artifact Registry helpers.
-See [`gce/README.md`](gce/README.md) for the ensure/delete API.
+See [`gce/README.md`](gce/README.md) for the ensure/delete API and IAM
+commands.
 
 ## Remotes
 
