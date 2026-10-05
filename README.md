@@ -12,20 +12,15 @@ kit. Surfaces:
 - Owner service-account bootstrap in [`gce/iam.sh`](gce/iam.sh) for remote
   manage
 
-[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://shell.cloud.google.com/cloudshell/editor?show=ide%2Cterminal)
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://shell.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/44devcom/9ai-ext-google&cloudshell_git_branch=master&cloudshell_workspace=gce&cloudshell_tutorial=tutorial.md&cloudshell_print=cloudshell-print.txt)
 
-This repo is **private**. Cloud Shell cannot prompt for GitHub credentials during
-auto-clone (`terminal prompts disabled`), so the button opens a shell only —
-it does **not** pass `cloudshell_git_repo`. After the terminal is ready, paste:
-
-```bash
-gh auth login -p https -w && gh repo clone 44devcom/9ai-ext-google ~/9ai-ext-google && cd ~/9ai-ext-google/gce && chmod 755 cloudshell-start.sh && ./cloudshell-start.sh
-```
-
-That asks for GitHub login, clones, and launches [`gce/tutorial.md`](gce/tutorial.md).
-Select a billed project, then run `./cloudshell-bootstrap.sh` (Owner SA + key).
-Re-entry from an existing clone: `cd ~/9ai-ext-google/gce && ./cloudshell-start.sh`.
-Without Cloud Shell, use `./gce/iam.sh ensure-owner-sa` with your user Owner login.
+The button clones this repo, opens `gce/`, prints a short banner, and launches
+[`gce/tutorial.md`](gce/tutorial.md): select a billed project, then run
+`./cloudshell-bootstrap.sh` (Owner SA + key). If auto-clone fails (`terminal
+prompts disabled` on a private fork), run
+[`gce/cloudshell-start.sh`](gce/cloudshell-start.sh) after `gh auth login`.
+Without Cloud Shell, use `./gce/iam.sh ensure-owner-sa` on any host with your
+user Owner login.
 
 See [`console/README.md`](console/README.md) for build, vault material
 projection, interactive / one-shot usage, and Artifact Registry helpers.

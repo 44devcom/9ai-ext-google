@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
-# Interactive Cloud Shell entry for private (or public) 9ai-ext-google.
-# Use when Open in Cloud Shell cannot auto-clone (GitHub prompts disabled).
+# Fallback when Open in Cloud Shell auto-clone fails (private fork; GitHub
+# prompts disabled). Public 9ai-ext-google uses the README OiCS button instead.
 #
-#   bash cloudshell-start.sh
-#   # or from ~/ after a no-repo Cloud Shell open:
-#   curl is not used — paste the one-liner from the README, or:
-#   gh auth login && gh repo clone 44devcom/9ai-ext-google && cd 9ai-ext-google/gce && ./cloudshell-start.sh
+#   gh auth login -p https -w
+#   gh repo clone 44devcom/9ai-ext-google ~/9ai-ext-google
+#   cd ~/9ai-ext-google/gce && ./cloudshell-start.sh
 set -euo pipefail
 
 REPO_SLUG="${REPO_SLUG:-44devcom/9ai-ext-google}"
