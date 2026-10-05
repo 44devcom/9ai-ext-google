@@ -1,7 +1,11 @@
 9ai-ext-google / gce — Cloud Shell
 
-The walkthrough tutorial should open automatically.
-If it did not:  cloudshell launch-tutorial tutorial.md
+Private repo: do not use cloudshell_git_repo auto-clone (prompts disabled).
+Open Cloud Shell, then paste the README one-liner, or from an existing clone:
+
+  ./cloudshell-start.sh
+
+That asks for GitHub credentials if needed, then launches the tutorial.
 
 1) Complete "Select a project" (billing required).
 2) Run the bootstrap step, or:

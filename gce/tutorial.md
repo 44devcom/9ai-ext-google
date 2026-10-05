@@ -1,7 +1,9 @@
 # 9ai-ext-google: Owner SA for remote manage
 
-This tutorial runs after **Open in Cloud Shell**. Non-Google GitHub repos
-start without your default credentials — select a billed project first, then
+This tutorial runs after `./cloudshell-start.sh` (or a public-repo Open in
+Cloud Shell clone). Private GitHub needs `gh auth login` before clone — Cloud
+Shell disables git username prompts on auto-clone. Non-Google clones also
+start without default GCP credentials — select a billed project first, then
 bootstrap the Owner service account.
 
 ## Select a project

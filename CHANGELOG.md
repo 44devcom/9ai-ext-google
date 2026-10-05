@@ -36,4 +36,9 @@ Do not recap other units here.
 
 ### Fixed
 
+- Private-repo Open in Cloud Shell no longer auto-clones (GitHub prompts are
+  disabled and the clone hard-failed). Button opens a shell only; paste
+  `gh auth login` + `./cloudshell-start.sh` to authenticate, clone, and
+  launch the tutorial.
+
 ### Security

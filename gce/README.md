@@ -2,12 +2,18 @@
 
 Bash libraries for Cloud Shell / operator deploy scripts.
 
-[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://shell.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/44devcom/9ai-ext-google&cloudshell_git_branch=master&cloudshell_workspace=gce&cloudshell_tutorial=tutorial.md&cloudshell_print=cloudshell-print.txt)
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://shell.cloud.google.com/cloudshell/editor?show=ide%2Cterminal)
 
-That link opens workspace `gce`, prints [`cloudshell-print.txt`](cloudshell-print.txt),
-and launches [`tutorial.md`](tutorial.md). Complete **Select a project**
-(billing required — third-party GitHub clones start without default
-credentials), then the clickable bootstrap step runs
+Private GitHub: auto-clone fails without credentials, so the button opens Cloud
+Shell with no `cloudshell_git_repo`. After the terminal is ready, paste:
+
+```bash
+gh auth login -p https -w && gh repo clone 44devcom/9ai-ext-google ~/9ai-ext-google && cd ~/9ai-ext-google/gce && chmod 755 cloudshell-start.sh && ./cloudshell-start.sh
+```
+
+[`cloudshell-start.sh`](cloudshell-start.sh) prompts for GitHub auth if needed,
+clones or refreshes the repo, and launches [`tutorial.md`](tutorial.md).
+Complete **Select a project** (billing required), then run
 [`cloudshell-bootstrap.sh`](cloudshell-bootstrap.sh).
 
 If the tutorial panel is missing: `cloudshell launch-tutorial tutorial.md`.
