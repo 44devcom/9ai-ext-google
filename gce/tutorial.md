@@ -21,7 +21,22 @@ chmod 755 lib.sh iam.sh cloudshell-bootstrap.sh && ./cloudshell-bootstrap.sh
 
 Copy the JSON from the terminal, or download `nineai-remote-owner.key.json`.
 
-On a laptop or CI host:
+## Keys blocked by org policy
+
+If bootstrap prints `key creation blocked by org policy`, your organization
+disallows service account keys (`constraints/iam.disableServiceAccountKeyCreation`).
+The Owner SA and `roles/owner` binding are still created; bootstrap grants your
+active login `roles/iam.serviceAccountTokenCreator` on that SA and prints
+`gcloud config set auth/impersonate_service_account ...` on stderr.
+
+In Cloud Shell you can keep using your user login for `gcloud` in this session.
+On another machine, run `gcloud auth login`, then follow the impersonation
+block from bootstrap (or re-run `./cloudshell-bootstrap.sh`).
+
+The Docker console (`console/run.sh`) still needs a key file or
+`GCP_CREDENTIALS_JSON`; impersonation is for host `gcloud` only.
+
+On a laptop or CI host (when keys are allowed):
 
 ```bash
 gcloud auth activate-service-account --key-file=./nineai-remote-owner.key.json

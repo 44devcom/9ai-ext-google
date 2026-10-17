@@ -10,6 +10,9 @@ Do not recap other units here.
 
 ### Changed
 
+- `gce/iam.sh ensure-owner-sa` succeeds when org policy blocks service account
+  keys: grants `roles/iam.serviceAccountTokenCreator` to the active principal
+  and prints `gcloud` impersonation instructions instead of failing bootstrap.
 - `gce_ensure_instance` create path disables shielded vTPM and Integrity
   Monitoring (`--no-shielded-vtpm`, `--no-shielded-integrity-monitoring`).
 - GCP-002: compose path reachability is for operators / `core/vault`

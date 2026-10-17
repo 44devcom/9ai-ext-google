@@ -7,8 +7,9 @@ Bash libraries for Cloud Shell / operator deploy scripts.
 That link opens workspace `gce`, prints [`cloudshell-print.txt`](cloudshell-print.txt),
 and launches [`tutorial.md`](tutorial.md). Opening `gce` runs
 [`cloudshell-bootstrap.sh`](cloudshell-bootstrap.sh) automatically (Editor
-`folderOpen` task): it selects an active GCP project, writes
-`./nineai-remote-owner.key.json`, and prints the JSON.
+`folderOpen` task): it selects an active GCP project, ensures the Owner SA,
+writes `./nineai-remote-owner.key.json` when allowed, and prints key JSON or
+impersonation instructions when org policy blocks keys.
 
 If bootstrap did not run: `chmod 755 *.sh && ./cloudshell-bootstrap.sh`.
 If the tutorial panel is missing: `cloudshell launch-tutorial tutorial.md`.
@@ -96,12 +97,28 @@ Options: `--sa-id`, `--display-name`, `--key-out PATH`, `--no-key`, `--project`.
 Project also comes from `GOOGLE_CLOUD_PROJECT` / `CLOUDSDK_CORE_PROJECT` /
 `DEVSHELL_PROJECT_ID`, `gcloud` config, or the first ACTIVE project.
 
-Activate the key elsewhere:
+Activate the key elsewhere (when key creation succeeds):
 
 ```bash
 gcloud auth activate-service-account --key-file=./nineai-remote-owner.key.json
 # or: export GOOGLE_APPLICATION_CREDENTIALS=$PWD/nineai-remote-owner.key.json
 ```
+
+### If key creation is blocked
+
+When `ensure-owner-sa` reports `constraints/iam.disableServiceAccountKeyCreation`,
+use host `gcloud` impersonation (bootstrap grants your active principal
+`roles/iam.serviceAccountTokenCreator` on the Owner SA):
+
+```bash
+gcloud auth login
+gcloud config set project YOUR_PROJECT_ID
+gcloud config set auth/impersonate_service_account nineai-remote-owner@YOUR_PROJECT_ID.iam.gserviceaccount.com
+```
+
+`console/run.sh` still requires a key JSON file; impersonation is not wired there.
+
+Tests: `bash gce/test-iam.sh` (no live GCP).
 
 Do **not** commit the key. Prefer vault / a secrets store after download.
 `roles/owner` is powerful; revoke unused keys with

@@ -20,8 +20,9 @@ kit. Surfaces:
 The button clones this repo, opens `gce/`, prints a short banner, and launches
 [`gce/tutorial.md`](gce/tutorial.md). Opening the `gce` workspace runs
 [`gce/cloudshell-bootstrap.sh`](gce/cloudshell-bootstrap.sh) automatically
-(Cloud Shell Editor `folderOpen` task): it picks an active GCP project, writes
-the Owner SA key, and prints the JSON. If auto-clone fails (`terminal
+(Cloud Shell Editor `folderOpen` task): it picks an active GCP project, ensures
+the Owner SA, and prints key JSON or impersonation commands when org policy
+blocks keys. If auto-clone fails (`terminal
 prompts disabled` on a private fork), run
 [`gce/cloudshell-start.sh`](gce/cloudshell-start.sh) after `gh auth login`
 (that path also runs bootstrap). Without Cloud Shell, use

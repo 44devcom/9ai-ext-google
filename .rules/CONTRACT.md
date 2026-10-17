@@ -5,14 +5,16 @@ GCP CLI console image (`gcloud`, `gsutil`, `bq`) and compose service for
 interactive and one-shot vendor CLI runs, plus host Docker Artifact Registry
 helper scripts under `console/scripts/`, plus idempotent GCE ensure/delete
 helpers under `gce/lib.sh` for Cloud Shell / operator deploy scripts, plus
-`gce/iam.sh` to create/reuse a project Owner service account and key for
-remote management, plus Cloud Shell surfaces `gce/tutorial.md`,
+`gce/iam.sh` to create/reuse a project Owner service account and key (or
+impersonation instructions when org policy blocks keys) for remote management,
+plus Cloud Shell surfaces `gce/tutorial.md`,
 `gce/cloudshell-bootstrap.sh`, and `gce/cloudshell-print.txt`. No Python
 distribution and no `@platform/*` kit.
 
 ## Inputs / assumptions
 Callers supply GCP service-account material as environment credentials
-(`GCP_CREDENTIALS_JSON`, optional `GCP_PROJECT`). Prefer vault projection
+(`GCP_CREDENTIALS_JSON`, optional `GCP_PROJECT`), or use host `gcloud`
+impersonation of `nineai-remote-owner` when keys cannot be created. Prefer vault projection
 over writing `gcp.json` or `.env`. Docker and Docker Compose are required to
 build and run the image.
 

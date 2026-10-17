@@ -1,7 +1,8 @@
 9ai-ext-google / gce — Cloud Shell
 
-Bootstrap runs automatically when this workspace opens (Owner key JSON
-in the terminal and ./nineai-remote-owner.key.json). Do not commit the key.
+Bootstrap runs automatically when this workspace opens (Owner key JSON in the
+terminal and ./nineai-remote-owner.key.json when org policy allows keys;
+otherwise impersonation commands on stderr). Do not commit keys.
 
 If it did not run:  chmod 755 *.sh && ./cloudshell-bootstrap.sh
 If the tutorial panel is missing:  cloudshell launch-tutorial tutorial.md

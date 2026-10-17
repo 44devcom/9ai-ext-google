@@ -22,7 +22,7 @@ APIS=(
 usage() {
   cat <<'EOF'
 Usage:
-  ./iam.sh ensure-owner-sa [options]   Create/reuse SA, grant roles/owner, write key JSON
+  ./iam.sh ensure-owner-sa [options]   Create/reuse SA, grant roles/owner, key JSON or impersonation hints
   ./iam.sh show [options]              Print SA email and project IAM bindings for it
   ./iam.sh grant-owner [options]       Ensure roles/owner on an existing SA
   ./iam.sh enable-apis [options]       Enable IAM / Compute / Resource Manager APIs
@@ -36,9 +36,69 @@ Options:
   --project ID          GCP project (env, gcloud config, else first ACTIVE)
 
 Requires a logged-in principal that can create service accounts and set project
-IAM (typically your user Owner). The resulting key is for remote automation —
-do not commit it. Prefer vault or a secrets store after download.
+IAM (typically your user Owner). When org policy allows keys, the JSON is for
+remote automation — do not commit it. When keys are blocked
+(constraints/iam.disableServiceAccountKeyCreation), ensure-owner-sa grants
+TokenCreator to your active principal and prints impersonation commands.
 EOF
+}
+
+WRITE_KEY_STATUS=""
+
+key_creation_blocked() {
+  local err="$1"
+  [[ "$err" == *disableServiceAccountKeyCreation* ]] && return 0
+  [[ "$err" == *"Key creation is not allowed"* ]] && return 0
+  return 1
+}
+
+active_gcloud_account() {
+  gcloud auth list --filter=status:ACTIVE --format='value(account)' 2>/dev/null | head -1
+}
+
+iam_member_for_account() {
+  local acct="$1"
+  if [[ "$acct" == *@*.iam.gserviceaccount.com ]]; then
+    printf 'serviceAccount:%s\n' "$acct"
+  else
+    printf 'user:%s\n' "$acct"
+  fi
+}
+
+grant_impersonation_for_active_principal() {
+  local email="$1" acct member
+  acct=$(active_gcloud_account)
+  if [[ -z "$acct" ]]; then
+    echo "warning: no active gcloud account; cannot grant roles/iam.serviceAccountTokenCreator" >&2
+    return 1
+  fi
+  member=$(iam_member_for_account "$acct")
+  echo "granting roles/iam.serviceAccountTokenCreator to ${member} on ${email}" >&2
+  gcloud iam service-accounts add-iam-policy-binding "$email" \
+    --member="$member" \
+    --role="roles/iam.serviceAccountTokenCreator" \
+    --quiet >/dev/null
+  printf '%s\n' "$acct"
+}
+
+print_impersonation_instructions() {
+  local project="$1" email="$2" principal="${3:-}"
+  cat >&2 <<EOF
+
+Org policy blocks service account keys. Use impersonation for remote gcloud instead.
+
+  gcloud auth login
+  gcloud config set project ${project}
+  gcloud config set auth/impersonate_service_account ${email}
+
+Or per command:
+  gcloud compute instances list --impersonate-service-account=${email}
+
+The Docker console (console/run.sh) still requires a key file or GCP_CREDENTIALS_JSON.
+EOF
+  if [[ -n "$principal" ]]; then
+    echo "impersonator=${principal}" >&2
+  fi
 }
 
 die() { echo "error: $*" >&2; exit 1; }
@@ -124,20 +184,33 @@ grant_owner() {
 }
 
 write_key() {
-  local project="$1" email="$2" out="$3"
+  local project="$1" email="$2" out="$3" err
+  WRITE_KEY_STATUS=""
   if [[ -f "$out" ]]; then
     echo "key file already exists: ${out} (not overwritten)" >&2
-  else
-    mkdir -p "$(dirname "$out")"
-    echo "creating key -> ${out}" >&2
-    gcloud iam service-accounts keys create "$out" \
-      --iam-account="$email" \
-      --project="$project" \
-      --quiet
+    WRITE_KEY_STATUS=existing
+    cat "$out"
+    return 0
+  fi
+  mkdir -p "$(dirname "$out")"
+  echo "creating key -> ${out}" >&2
+  if err=$(gcloud iam service-accounts keys create "$out" \
+    --iam-account="$email" \
+    --project="$project" \
+    --quiet 2>&1); then
     chmod 600 "$out"
     echo "key_written=${out}" >&2
+    WRITE_KEY_STATUS=created
+    cat "$out"
+    return 0
   fi
-  cat "$out"
+  if key_creation_blocked "$err"; then
+    echo "key creation blocked by org policy (constraints/iam.disableServiceAccountKeyCreation)" >&2
+    WRITE_KEY_STATUS=blocked
+    return 0
+  fi
+  echo "$err" >&2
+  die "failed to create service account key"
 }
 
 cmd_ensure_owner_sa() {
@@ -153,12 +226,26 @@ cmd_ensure_owner_sa() {
   grant_owner "$project" "$email"
   if [[ "$no_key" != 1 ]]; then
     write_key "$project" "$email" "$key_out"
+    case "${WRITE_KEY_STATUS}" in
+      blocked)
+        principal=""
+        principal=$(grant_impersonation_for_active_principal "$email" || true)
+        print_impersonation_instructions "$project" "$email" "$principal"
+        echo "remote_manage=impersonation" >&2
+        ;;
+      created|existing)
+        echo "remote_manage=key_file" >&2
+        echo "use with: export GOOGLE_APPLICATION_CREDENTIALS=${key_out}" >&2
+        ;;
+      "")
+        die "write_key left WRITE_KEY_STATUS unset"
+        ;;
+    esac
   else
     echo "skipping key (--no-key)" >&2
   fi
   echo "service_account=${email}" >&2
   echo "project=${project}" >&2
-  echo "use with: export GOOGLE_APPLICATION_CREDENTIALS=${key_out}" >&2
 }
 
 cmd_grant_owner() {
